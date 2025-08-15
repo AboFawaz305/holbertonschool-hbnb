@@ -37,3 +37,18 @@ following components: *data retreiver* this component acts as a facade to
 provide an easy to use interface for other layers, and a *model* component for
 all entity in the system which describe their representation and provide the
 functionality to access it.
+
+
+---
+# Class diagram/ business logic
+this diagram is about the Class diagram/ business logic for HBNB project 
+we will use it as a stepping stone to build the project
+
+![Class Diagram](./Class_Diagram.png)
+
+## explnition 
+this diagram will show how we set up the connection of the data with its managers
+that will help when we start so we dont start from 0 its just a base idea
+
+we ues a System manager that will use more managers to handle data classes
+and we explain each entity with its relations with each other 
