@@ -1,0 +1,14 @@
+from app.models.BaseModel import BaseModel
+
+
+class user(BaseModel):
+
+    def __init__(slef,first_name,last_name,email,is_admin=False):
+        self.super().__init__()
+        self.first_name=first_name
+        self.last_name=last_name
+        self.email =email
+        self.is_admin=is_admin
+
+    
+
