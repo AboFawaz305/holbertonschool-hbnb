@@ -1,9 +1,10 @@
-from app.models.BaseModel import BaseModel
+from app.models.BaseModels import BaseModel
 
 
 class Review(BaseModel):
-    def __init__(self, rating , place , user):
-        self.super().__init__()
-        self.rating = ratin
+    def __init__(self, rating, text, place, user):
+        super().__init__()
+        self.rating = rating
+        self.text = text
         self.place = place
         self.user = user

@@ -8,6 +8,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    API_URL = "http://127.0.0.1:5000"
 
 
 config = {"development": DevelopmentConfig, "default": DevelopmentConfig}
