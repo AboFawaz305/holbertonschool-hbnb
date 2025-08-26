@@ -16,12 +16,34 @@ user_model = api.model(
 )
 
 
+
+@api.route("/<string:id>")
+class User(Resource):
+    @api.marshal_with(user_model)
+    @api.response(200,"OK")
+    @api.response(404,"Not found")
+
+    def get(self, id):
+        user = facade.get_user(id)
+        if not user:
+            return {'error':"Not found"},404
+        return user ,200
+
+
 @api.route("/")
 class Users(Resource):
+    @api.marshal_list_with(user_model)
+    @api.response(200,"OK")
+    @api.response(404,"Not found")
+    def get(self):
+        users = facade.get_all_users()
+        if not users:
+            return {'error':"Not found"},404
+        return users ,200
     @api.expect(user_model, validate=True)
     @api.response(201, "User successfully created")
     @api.response(400, "Email already registered")
-    @api.response(400, "Invalid input data")
+    @api.response(400, "Invalid input data")    
     def post(self):
         user_json = api.payload
         if facade.get_user_by_email(user_json["email"]) is not None:
@@ -30,3 +52,24 @@ class Users(Resource):
         if new_user is None:
             return {'error':'Invalid input data'},400
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+
+
+@api.route("/<string:id>")
+class User(Resource):
+    @api.marshal_with(user_model)
+    @api.response(200,"OK")
+    @api.response(404,"Not found")
+    def get(self, id):
+        user = facade.get_user(id)
+        if not user:
+            return {'error':"Not found"},404
+        return user ,200
+    @api.marshal_with(user_model)
+    @api.response(200,"OK")
+    @api.response(404,"Not found")
+    @api.response(400,"Bad Request")
+    def put(self, id):
+        user = facade.user_repo.update(id)
+        if not user:
+            return {'error':"Not found"},404
+        return user ,200
