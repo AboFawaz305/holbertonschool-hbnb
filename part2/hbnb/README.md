@@ -18,7 +18,7 @@
 - update amenity
 - get all amenities with 2 stored amenities
 ## Issues encountered
-- wrong output when get all and empty amenity repo
+- [x] wrong output when get all and empty amenity repo
 # Place
 ## Tested
 - get all places
