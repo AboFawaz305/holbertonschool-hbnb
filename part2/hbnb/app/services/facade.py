@@ -75,7 +75,7 @@ class HBnBFacade:
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
 
-    def create_amenity(self, amenity):
+    def create_aminity(self, amenity):
         if "name" not in amenity.keys():
             raise ValueError("Amenity must have a name")
         if len(amenity["name"]) > 50:
@@ -85,15 +85,15 @@ class HBnBFacade:
         self.amenity_repo.add(data)
         return data
 
-    def get_amenity(self, amenity_id) -> Amenity:
+    def get_aminity(self, amenity_id) -> Amenity:
         return self.amenity_repo.get(amenity_id)
 
-    def get_all_amenities(self):
+    def get_all_aminities(self):
         return self.amenity_repo.get_all()
 
-    def update_amenity(self, amenity_id, data) -> Amenity:
+    def update_aminity(self, amenity_id, data) -> Amenity:
         self.amenity_repo.update(amenity_id, data)
-        return self.get_amenity(amenity_id)
+        return self.get_aminity(amenity_id)
 
     def create_review(self, review_data):
         # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
