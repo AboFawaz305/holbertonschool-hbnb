@@ -3,6 +3,7 @@ from app.models.amenity import Amenity
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.place import Place
+from app.models.review import Review
 from email_validator import validate_email
 
 
@@ -75,6 +76,7 @@ class HBnBFacade:
         if len(amenity["name"]) > 50:
             raise ValueError("Amenity name must not exceed 50 characters.")
         data = Amenity(**amenity)
+        
         self.amenity_repo.add(data)
         return data
 
@@ -87,3 +89,57 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, data) -> Amenity:
         self.amenity_repo.update(amenity_id, data)
         return self.get_amenity(amenity_id)
+    
+    
+    def create_review(self, review_data):
+    # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
+        if review_data["rating"] not in range(0,6):
+           raise ValueError("rating is not valid ")
+        if self.user_repo.get(review_data["user_id"]) == None:
+            raise ValueError("user ID does not exist")
+            
+        if self.place_repo.get(review_data["place_id"]) == None:
+            raise ValueError("place ID does not exist")
+        new_review = Review(**review_data)
+        self.review_repo.add(new_review)
+        place = self.place_repo.get(review_data["place_id"])
+        place.add_review(new_review)
+        return new_review
+        
+        
+
+    def get_review(self, review_id):
+        if not self.review_repo.get(review_id):
+           raise ValueError("the review ID doesn't exist")
+        return self.review_repo.get(review_id)
+
+    def get_all_reviews(self):
+    # Placeholder for logic to retrieve all reviews
+       return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+    # Placeholder for logic to retrieve all reviews for a specific place
+        if self.get_place(place_id) == None:
+            raise ValueError("place not found") 
+        place =self.get_place(place_id)
+        return place.reviews
+    def update_review(self, review_id, review_data):
+    # Placeholder for logic to update a review
+        if self.review_repo.get(review_id) == None:
+           raise ValueError("review id doesn't exist")
+        if review_data["rating"] not in range(0,6):
+           raise ValueError("rating is not valid ")
+        if self.user_repo.get(review_data["user_id"]) == None:
+            raise ValueError("user ID does not exist")
+            
+        if self.place_repo.get(review_data["place_id"]) == None:
+            raise ValueError("place ID does not exist")
+        
+        self.review_repo.update(review_id,review_data)
+        return self.get_review(review_id)
+        
+    def delete_review(self, review_id):
+    # Placeholder for logic to delete a review
+        if self.review_repo.get(review_id) == None:
+           raise ValueError("review id doesn't exist")
+        self.review_repo.delete(review_id)
