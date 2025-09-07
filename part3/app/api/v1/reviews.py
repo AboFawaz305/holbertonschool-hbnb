@@ -1,0 +1,78 @@
+from flask_restx import Namespace, Resource, fields
+from app.services import facade
+
+api = Namespace('reviews', description='Review operations')
+
+# Define the review model for input validation and documentation
+review_model = api.model('Review', {
+    'id': fields.String(description='Text of the review'),
+    'text': fields.String(required=True, description='Text of the review'),
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    'user_id': fields.String(required=True, description='ID of the user'),
+    'place_id': fields.String(required=True, description='ID of the place')
+})
+
+@api.route('/')
+class ReviewList(Resource):
+    @api.expect(review_model)
+    @api.response(201, 'Review successfully created')
+    @api.response(400, 'Invalid input data')
+    @api.marshal_with(review_model)
+    def post(self):
+        """Register a new review"""
+        try:
+            new_review =  facade.create_review(api.payload)
+            return new_review,200
+        except ValueError as e:
+            api.abort(400, str(e))
+
+    @api.response(200, 'List of reviews retrieved successfully')
+    @api.marshal_list_with(review_model)
+    def get(self):
+        """Retrieve a list of all reviews"""
+        return facade.get_all_reviews()
+
+@api.route('/<review_id>')
+class ReviewResource(Resource):
+    @api.marshal_with(review_model)
+    @api.response(200, 'Review details retrieved successfully')
+    @api.response(404, 'Review not found')
+    def get(self, review_id):
+        """Get review details by ID"""
+        try:
+            return facade.get_review(review_id)
+        except ValueError as e:
+            api.abort(404,str(e))
+
+    @api.expect(review_model)
+    @api.response(200, 'Review updated successfully')
+    @api.response(404, 'Review not found')
+    @api.response(400, 'Invalid input data')
+    def put(self, review_id):
+        """Update a review's information"""
+        try:
+            facade.update_review(review_id,api.payload)
+        except ValueError as e:
+            api.abort(400,str(e))
+        
+    @api.response(200, 'Review deleted successfully')
+    @api.response(404, 'Review not found')
+    def delete(self, review_id):
+        """Delete a review"""
+        try:
+            facade.delete_review(review_id)
+            return {'Review deleted successfully'}
+        except ValueError as e:
+            api.abort(404,str(e))
+        
+
+@api.route('/places/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.marshal_list_with(review_model)
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        try:
+            return facade.get_reviews_by_place(place_id)
+        except ValueError as e:
+            api.abort(404,str(e))
