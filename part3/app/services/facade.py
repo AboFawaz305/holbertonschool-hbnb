@@ -1,4 +1,3 @@
-from app.models import amenity
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review

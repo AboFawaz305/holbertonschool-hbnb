@@ -12,6 +12,7 @@ user_model = api.model(
         ),
         "last_name": fields.String(required=True, description="Last name of the user"),
         "email": fields.String(required=True, description="Email of the user"),
+        "password":fields.String(required=True,description="password")
     },
 )
 
@@ -48,14 +49,18 @@ class Users(Resource):
 
 @api.route("/<string:id>")
 class User(Resource):
-    @api.marshal_with(user_model)
     @api.response(200, "OK")
     @api.response(404, "Not found")
     def get(self, id):
         user = facade.get_user(id)
         if not user:
             return {"error": "Not found"}, 404
-        return user, 200
+        return {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+        }, 201
 
     @api.marshal_with(user_model)
     @api.response(200, "OK")

@@ -2,3 +2,4 @@ flask
 flask-restx
 email_validator
 requests
+flask-bcrypt
