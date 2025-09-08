@@ -1,5 +1,7 @@
+import json
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import  get_jwt_identity, jwt_required
 
 api = Namespace('reviews', description='Review operations')
 
@@ -8,20 +10,26 @@ review_model = api.model('Review', {
     'id': fields.String(description='Text of the review'),
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
+    #'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
 @api.route('/')
 class ReviewList(Resource):
+    @jwt_required()
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     @api.marshal_with(review_model)
     def post(self):
         """Register a new review"""
+        user = json.loads(get_jwt_identity())
+        review_data = api.payload
+        reviewed_place =facade.get_place(review_data['place_id'])
+        if user["id"] == review_model["owner_id"]:
+            api.abort(400,"invalid data:You cannot review your own place")
         try:
-            new_review =  facade.create_review(api.payload)
+            new_review =  facade.create_review(review_data)
             return new_review,200
         except ValueError as e:
             api.abort(400, str(e))

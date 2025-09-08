@@ -1,5 +1,7 @@
+import json
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import  get_jwt_identity,jwt_required
 
 api = Namespace('places', description='Place operations')
 
@@ -25,7 +27,7 @@ place_model_Create_request = api.model('place_model_Create_request', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(description='owner id'),
+    # 'owner_id': fields.String(description='owner id'),
 })
 
 place_model_Create_responce = api.model('place_model_Create_responce', {
@@ -86,6 +88,7 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class PlaceList(Resource):
+    @jwt_required()
     @api.expect(place_model_Create_request)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
@@ -93,11 +96,12 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         Place_data = api.payload
+        user = json.loads(get_jwt_identity())
         try:
-            owner_id = Place_data["owner_id"] #scuffed solotion
-            new_user = facade.create_place(Place_data)
-            new_user.owner_id = owner_id #scuffed solotion
-            return  new_user,200
+            owner_id = user["id"]
+            new_place = facade.create_place(Place_data)
+            new_place.owner_id = owner_id
+            return  new_place,200
         except ValueError:
             return {"error":"invalid input data"},400
 
