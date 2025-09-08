@@ -1,6 +1,7 @@
+import json
 from app.services import facade
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import  jwt_required
+from flask_jwt_extended import  get_jwt_identity, jwt_required
 
 api = Namespace("users", description="User operations")
 
@@ -8,12 +9,18 @@ api = Namespace("users", description="User operations")
 user_model = api.model(
     "User",
     {
-        "first_name": fields.String(
-            required=True, description="First name of the user"
-        ),
+        "first_name": fields.String(required=True, description="First name of the user"),
         "last_name": fields.String(required=True, description="Last name of the user"),
         "email": fields.String(required=True, description="Email of the user"),
         "password":fields.String(required=True,description="password")
+    },
+)
+
+user_model_update = api.model(
+    "user_model_update",
+    {
+        "first_name": fields.String( description="First name of the user"),
+        "last_name": fields.String( description="Last name of the user"),
     },
 )
 
@@ -63,11 +70,17 @@ class User(Resource):
             "email": user.email,
         }, 201
 
+    @jwt_required()
     @api.marshal_with(user_model)
     @api.response(200, "OK")
     @api.response(404, "Not found")
     @api.response(400, "Bad Request")
+    @api.expect(user_model_update)
     def put(self, id):
+        user = json.loads(get_jwt_identity())
+        user_data = api.payload
+        if not user['id'] == id:
+            api.abort()
         user = facade.user_repo.update(id)
         if not user:
             return {"error": "Not found"}, 404

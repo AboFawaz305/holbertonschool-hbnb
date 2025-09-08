@@ -27,7 +27,6 @@ place_model_Create_request = api.model('place_model_Create_request', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    # 'owner_id': fields.String(description='owner id'),
 })
 
 place_model_Create_responce = api.model('place_model_Create_responce', {
@@ -37,7 +36,6 @@ place_model_Create_responce = api.model('place_model_Create_responce', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(description='owner id'),
 })
 
 
@@ -98,9 +96,9 @@ class PlaceList(Resource):
         Place_data = api.payload
         user = json.loads(get_jwt_identity())
         try:
-            owner_id = user["id"]
+            Place_data['owner_id'] = user["id"]
             new_place = facade.create_place(Place_data)
-            new_place.owner_id = owner_id
+            # new_place.owner_id = owner_id 
             return  new_place,200
         except ValueError:
             return {"error":"invalid input data"},400
@@ -120,15 +118,19 @@ class PlaceResource(Resource):
         """Get place details by ID"""
         return facade.get_place(place_id)
 
-
+    @jwt_required()
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     @api.expect(place_model_put_request)
     def put(self, place_id):
         """Update a place's information"""
-        if  facade.get_place(place_id) is None:
+        user = json.loads(get_jwt_identity())
+        place = facade.get_place(place_id)
+        if place is None:
             return {"error":"place not found"},404 
+        if not user['id'] == place.owner_id:
+            return {"error":"Unauthorized action"},403
         facade.update_place(place_id,api.payload)
         return {"message": "Place updated successfully"},200
         # Placeholder for the logic to update a place by ID

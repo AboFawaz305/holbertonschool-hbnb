@@ -7,10 +7,9 @@ api = Namespace('reviews', description='Review operations')
 
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
-    'id': fields.String(description='Text of the review'),
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    #'user_id': fields.String(required=True, description='ID of the user'),
+    'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
@@ -51,22 +50,32 @@ class ReviewResource(Resource):
             return facade.get_review(review_id)
         except ValueError as e:
             api.abort(404,str(e))
-
+    
+    @jwt_required()
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
     def put(self, review_id):
         """Update a review's information"""
+        user = json.loads(get_jwt_identity())
+        review_data = api.payload
+        if not user['id'] == review_data['user_id']:
+            api.abort(403,'Unauthorized action')
         try:
-            facade.update_review(review_id,api.payload)
+            facade.update_review(review_id,review_data)
         except ValueError as e:
             api.abort(400,str(e))
-        
+    
+    @jwt_required()
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
         """Delete a review"""
+        user = json.loads(get_jwt_identity())
+        review_data = api.payload
+        if not user['id'] == review_data['user_id']:
+            api.abort(403,'Unauthorized action')
         try:
             facade.delete_review(review_id)
             return {'Review deleted successfully'}

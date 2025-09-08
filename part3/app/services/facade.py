@@ -54,8 +54,8 @@ class HBnBFacade:
         if not owner:
             raise ValueError(f"owner needs to be in DB")
 
-        del place_data["owner_id"]
-        place_data["owner"] = owner
+        # del place_data["owner_id"]
+        # place_data["owner"] = owner
 
         new_Place = Place(**place_data)
         self.place_repo.add(new_Place)
