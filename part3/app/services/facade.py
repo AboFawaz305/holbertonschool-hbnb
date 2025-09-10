@@ -14,7 +14,14 @@ class HBnBFacade:
         self.amenity_repo = InMemoryRepository()
 
     def create_user(self, user_data):
-        user = User(**user_data)
+        """
+        Verify the user. and store it in the database.
+        Return the created user or None if failed
+        """
+        try:
+            user = User(**user_data)
+        except Exception:
+            return None
         if not 50 > len(user.first_name) > 0:
             return None
         if not 50 > len(user.last_name) > 0:
@@ -42,14 +49,17 @@ class HBnBFacade:
         return self.user_repo.get_by_attribute("email", email)
 
     def create_place(self, place_data):
-        # Placeholder for logic to create a place, including validation for price, latitude, and longitude
+        """
+        Validate a place and store it.
+        Return: the created place or None on failure
+        """
         owner = self.user_repo.get(place_data["owner_id"])
 
         if place_data["price"] <= 0:
             raise ValueError("invald price must be bigger then 0")
-        if not -90 < place_data["latitude"] < 90:
+        if not -90 <= place_data["latitude"] <= 90:
             raise ValueError("invald latitude must be between -90 to 90")
-        if not -180 < place_data["longitude"] < 180:
+        if not -180 <= place_data["longitude"] <= 180:
             raise ValueError("invald longitude must be between -180 to 180")
         if not owner:
             raise ValueError(f"owner needs to be in DB")
