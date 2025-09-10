@@ -12,6 +12,14 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
+        self.user_repo.add(
+            User(
+                first_name="admin",
+                last_name="junior",
+                email="admin@admin.com",
+                password="admin",
+            )
+        )
 
     def create_user(self, user_data):
         """
