@@ -135,11 +135,9 @@ class HBnBFacade:
 
     def get_reviews_by_place(self, place_id):
         # Placeholder for logic to retrieve all reviews for a specific place
-        if self.get_place(place_id) == None:
-            raise ValueError("place not found")
         place = self.get_place(place_id)
         if place is None:
-            return None
+            raise ValueError("place not found")
         return place.reviews
 
     def update_review(self, review_id, review_data):
