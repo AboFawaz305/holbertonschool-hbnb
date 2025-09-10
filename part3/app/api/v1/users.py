@@ -3,6 +3,7 @@ import json
 from app.services import facade
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restx import Namespace, Resource, fields
+from app.bcrypt import bcrypt
 
 api = Namespace("users", description="User operations")
 
@@ -24,6 +25,8 @@ user_model_update = api.model(
     {
         "first_name": fields.String(description="First name of the user"),
         "last_name": fields.String(description="Last name of the user"),
+        "email": fields.String( description="Email of the user"),
+        "password": fields.String(description="password"),
     },
 )
 
@@ -43,7 +46,11 @@ class Users(Resource):
     @api.response(201, "User successfully created")
     @api.response(400, "Email already registered")
     @api.response(400, "Invalid input data")
+    @jwt_required()
     def post(self):
+        user = json.loads(get_jwt_identity())
+        if not user["is_admin"]:
+            return {'error':"Admin privleges required"},403
         user_json = api.payload
         if facade.get_user_by_email(user_json["email"]) is not None:
             return {"error": "Email already registered"}, 400
@@ -55,7 +62,9 @@ class Users(Resource):
             "first_name": new_user.first_name,
             "last_name": new_user.last_name,
             "email": new_user.email,
-        }, 201
+      }, 201
+        
+    
 
 
 @api.route("/<string:id>")
@@ -81,9 +90,19 @@ class User(Resource):
     @api.expect(user_model_update)
     def put(self, user_id):
         user = json.loads(get_jwt_identity())
+        if not user["is_admin"]:
+            return {'error':"Admin privleges required"},403
         user_data = api.payload
-        if not user["id"] == user_id:
-            api.abort(400, "Bad Request")
+        # if not user["id"] == user_id:
+        #     api.abort(400, "Bad Request")
+        if user_data["email"] is not None :
+            similar_emails = [
+            u for u in self.get_all_users() if u.email == user_data['email']
+        ]
+            if len(similar_emails) != 0:
+                return {'error':"email already in use"},400
+            if user_data['password'] is not None:
+                user_data['password'] = bcrypt.generate_password_hash(user_data['password']).decode('utf-8')
         facade.user_repo.update(user_id, user_data)
         updated_user = facade.get_user(user_id)
         return updated_user, 200

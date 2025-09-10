@@ -1,6 +1,7 @@
 from app.services import facade
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required,get_jwt_identity
 from flask_restx import Namespace, Resource, fields
+import json
 
 api = Namespace("aminities", description="Amenity operations")
 
@@ -30,8 +31,13 @@ class AminityList(Resource):
     @api.response(201, "Aminity successfully created")
     @api.response(400, "Invalid input data")
     @api.marshal_with(aminity_get_model)
+    @jwt_required()
     def post(self):
         """Register a new aminity"""
+        user = json.loads(get_jwt_identity())
+        if not user["is_admin"]:
+            return {'error':"Admin privleges required"},403
+        
         aminity = api.payload
         try:
             amenity = facade.create_aminity(aminity)
@@ -66,8 +72,12 @@ class AmenityResource(Resource):
     @api.response(404, "Aminity not found")
     @api.response(400, "Invalid input data")
     @api.marshal_with(aminity_get_model)
+    @jwt_required()
     def put(self, aminity_id):
         """Update an aminity's information"""
+        user = json.loads(get_jwt_identity())
+        if not user["is_admin"]:
+            return {'error':"Admin privleges required"},403
         aminity = api.payload
         if facade.get_aminity(aminity_id) is None:
             return {"error": "amenity not found"}, 404

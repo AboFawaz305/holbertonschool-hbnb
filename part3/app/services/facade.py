@@ -31,7 +31,7 @@ class HBnBFacade:
         except Exception:
             return None
         similar_emails = [
-            email for email in self.get_all_users() if email == user.email
+            u for u in self.get_all_users() if u.email == user.email
         ]
         if len(similar_emails) > 0:
             # the email is not unique
