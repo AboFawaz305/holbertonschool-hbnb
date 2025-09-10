@@ -162,6 +162,11 @@ class HBnBFacade:
 
     def delete_review(self, review_id):
         # Placeholder for logic to delete a review
-        if self.review_repo.get(review_id) == None:
+        review = self.review_repo.get(review_id)
+        if review is None:
             raise ValueError("review id doesn't exist")
+        place = self.place_repo.get(review.place_id)
+        if place is not None:
+            place.reviews.remove(review.id)
+            self.place_repo.update(place.id, {"reviews": place.reviews})
         self.review_repo.delete(review_id)
