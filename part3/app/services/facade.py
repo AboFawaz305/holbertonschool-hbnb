@@ -18,6 +18,7 @@ class HBnBFacade:
                 last_name="junior",
                 email="admin@admin.com",
                 password="admin",
+                is_admin=True,
             )
         )
 
@@ -38,9 +39,7 @@ class HBnBFacade:
             validate_email(user.email)
         except Exception:
             return None
-        similar_emails = [
-            u for u in self.get_all_users() if u.email == user.email
-        ]
+        similar_emails = [u for u in self.get_all_users() if u.email == user.email]
         if len(similar_emails) > 0:
             # the email is not unique
             return None
