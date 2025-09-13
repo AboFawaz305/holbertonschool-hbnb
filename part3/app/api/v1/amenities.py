@@ -1,7 +1,8 @@
-from app.services import facade
-from flask_jwt_extended import jwt_required,get_jwt_identity
-from flask_restx import Namespace, Resource, fields
 import json
+
+from app.services import facade
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_restx import Namespace, Resource, fields
 
 api = Namespace("aminities", description="Amenity operations")
 
@@ -36,8 +37,7 @@ class AminityList(Resource):
         """Register a new aminity"""
         user = json.loads(get_jwt_identity())
         if not user["is_admin"]:
-            return {'error':"Admin privleges required"},403
-        
+            return {"error": "Admin privleges required"}, 403
         aminity = api.payload
         try:
             amenity = facade.create_aminity(aminity)
@@ -77,7 +77,7 @@ class AmenityResource(Resource):
         """Update an aminity's information"""
         user = json.loads(get_jwt_identity())
         if not user["is_admin"]:
-            return {'error':"Admin privleges required"},403
+            return {"error": "Admin privleges required"}, 403
         aminity = api.payload
         if facade.get_aminity(aminity_id) is None:
             return {"error": "amenity not found"}, 404
