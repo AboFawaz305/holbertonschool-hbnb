@@ -2,49 +2,34 @@ from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
 from app.models.user import User
-from app.persistence.repository import InMemoryRepository
+from app.persistence.repository import SQLAlchemyRepository
 from email_validator import validate_email
 
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = InMemoryRepository()
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
-        self.amenity_repo = InMemoryRepository()
-        self.user_repo.add(
-            User(
-                first_name="admin",
-                last_name="junior",
-                email="admin@admin.com",
-                password="admin",
-                is_admin=True,
-            )
-        )
+        self.user_repo = SQLAlchemyRepository(User)
+        self.place_repo = SQLAlchemyRepository(Place)
+        self.review_repo = SQLAlchemyRepository(Review)
+        self.amenity_repo = SQLAlchemyRepository(Amenity)
+
 
     def create_user(self, user_data):
         """
         Verify the user. and store it in the database.
         Return the created user or None if failed
         """
-        try:
-            user = User(**user_data)
-        except Exception:
-            return None
-        if not 50 > len(user.first_name) > 0:
-            return None
-        if not 50 > len(user.last_name) > 0:
-            return None
-        try:
-            validate_email(user.email)
-        except Exception:
-            return None
-        similar_emails = [u for u in self.get_all_users() if u.email == user.email]
-        if len(similar_emails) > 0:
-            # the email is not unique
-            return None
+        
+        # try:
+        user = User(**user_data)
         self.user_repo.add(user)
+        # except Exception:
+        #     return None
         return user
+    
+    def create_admin(self,user):
+            user.is_admin = True
+            self.user_repo.add(user)
 
     def get_user(self, user_id):
         return self.user_repo.get(user_id)

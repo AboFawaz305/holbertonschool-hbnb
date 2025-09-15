@@ -91,8 +91,6 @@ class User(Resource):
         if not user["is_admin"]:
             return {"error": "Admin privleges required"}, 403
         user_data = api.payload
-        # if not user["id"] == user_id:
-        #     api.abort(400, "Bad Request")
         if "email" in user_data.keys():
             similar_emails = [
                 u for u in facade.get_all_users() if u.email == user_data["email"]

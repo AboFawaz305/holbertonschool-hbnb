@@ -1,4 +1,7 @@
 from app import create_app
+from app.db import db
+from app.models.user import User
+from app.models.BaseModels import BaseModel
 
 app = create_app()
 
