@@ -35,4 +35,4 @@ class Protected(Resource):
     def get(self):
         """A protected route"""
         current_user = json.loads(get_jwt_identity())
-        return {"message": f"Hello, user {current_user["id"]}"}, 200
+        return {"message": f"Hello, user {current_user['id']}"}, 200

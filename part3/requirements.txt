@@ -1,8 +1,8 @@
 flask
-flask-restx
+flask - restx
 email_validator
 requests
-flask-bcrypt
-flask-jwt-extended
+flask - bcrypt
+flask - jwt - extended
 sqlalchemy
-flask-sqlalchemy
+flask - sqlalchemy

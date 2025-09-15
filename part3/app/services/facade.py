@@ -13,23 +13,22 @@ class HBnBFacade:
         self.review_repo = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
 
-
     def create_user(self, user_data):
         """
         Verify the user. and store it in the database.
         Return the created user or None if failed
         """
-        
-        # try:
-        user = User(**user_data)
-        self.user_repo.add(user)
-        # except Exception:
-        #     return None
-        return user
-    
-    def create_admin(self,user):
-            user.is_admin = True
+
+        try:
+            user = User(**user_data)
             self.user_repo.add(user)
+        except Exception:
+            return None
+        return user
+
+    def create_admin(self, user):
+        user.is_admin = True
+        self.user_repo.add(user)
 
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
@@ -46,19 +45,6 @@ class HBnBFacade:
         Return: the created place
         Raise a value error if the data is invalid
         """
-
-        if 3 <= len(place_data["title"]) <= 100:
-            raise ValueError("invald place title must be between 3 and 100")
-        if place_data["price"] <= 0:
-            raise ValueError("invald price must be bigger then 0")
-        if not -90 <= place_data["latitude"] <= 90:
-            raise ValueError("invald latitude must be between -90 to 90")
-        if not -180 <= place_data["longitude"] <= 180:
-            raise ValueError("invald longitude must be between -180 to 180")
-        owner = self.user_repo.get(place_data["owner_id"])
-        if not owner:
-            raise ValueError(f"owner needs to be in DB")
-
         new_place = Place(**place_data)
         self.place_repo.add(new_place)
         return new_place
@@ -79,10 +65,8 @@ class HBnBFacade:
     def create_aminity(self, amenity):
         if "name" not in amenity.keys():
             raise ValueError("Amenity must have a name")
-        if len(amenity["name"]) > 50:
-            raise ValueError("Amenity name must not exceed 50 characters.")
-        data = Amenity(**amenity)
 
+        data = Amenity(**amenity)
         self.amenity_repo.add(data)
         return data
 
@@ -102,18 +86,8 @@ class HBnBFacade:
         Return the created review
         Raise a ValueError if the review_data is invalid
         """
-        if review_data["rating"] not in range(0, 6):
-            raise ValueError("rating is not valid ")
-        if self.user_repo.get(review_data["user_id"]) is None:
-            raise ValueError("user ID does not exist")
-        place = self.place_repo.get(review_data["place_id"])
-        if place is None:
-            raise ValueError("place ID does not exist")
-        if place.owner_id == review_data["user_id"]:
-            raise ValueError("you cannot review your place")
         new_review = Review(**review_data)
         self.review_repo.add(new_review)
-        place.add_review(new_review)
         return new_review
 
     def get_review(self, review_id):
@@ -133,30 +107,10 @@ class HBnBFacade:
         return place.reviews
 
     def update_review(self, review_id, review_data):
-        # Placeholder for logic to update a review
-        if self.review_repo.get(review_id) is None:
-            raise ValueError("review id doesn't exist")
-        if (
-            # if you have to update the rating
-            review_data["rating"] is not None
-            and review_data["rating"] not in range(0, 6)
-        ):
-            raise ValueError("rating is not valid ")
-        # You can not update the review user and place
-        if review_data["user_id"] is not None:
-            raise ValueError("You cannot update the user id")
-        if review_data["place_id"] is not None:
-            raise ValueError("You cannot update the user id")
+
         self.review_repo.update(review_id, review_data)
         return self.get_review(review_id)
 
     def delete_review(self, review_id):
-        # Placeholder for logic to delete a review
-        review = self.review_repo.get(review_id)
-        if review is None:
-            raise ValueError("review id doesn't exist")
-        place = self.place_repo.get(review.place_id)
-        if place is not None:
-            place.reviews.remove(review.id)
-            self.place_repo.update(place.id, {"reviews": place.reviews})
+
         self.review_repo.delete(review_id)

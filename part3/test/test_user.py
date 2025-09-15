@@ -4,8 +4,6 @@ from app.models.place import Place
 from app.models.review import Review
 
 
-
-
 class TestUser(unittest.TestCase):
     def test_user_creation(self):
         user = User("abdullah", "sh", "aaa@hotmail.com")

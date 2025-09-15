@@ -9,13 +9,8 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     API_URL = "http://127.0.0.1:5000"
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///development.db'
+    SQLALCHEMY_DATABASE_URI = "sqlite:///development.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-config = {
-    'development': DevelopmentConfig,
-    'default': DevelopmentConfig
-}
 
-
-
+config = {"development": DevelopmentConfig, "default": DevelopmentConfig}

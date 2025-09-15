@@ -135,4 +135,3 @@ class PlaceReviewList(Resource):
             return facade.get_reviews_by_place(place_id)
         except ValueError as e:
             api.abort(404, str(e))
-

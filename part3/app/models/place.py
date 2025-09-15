@@ -1,23 +1,37 @@
+from sqlalchemy.orm import validates
 from app.models.BaseModels import BaseModel
+from app.db import db
 
 
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner_id):
-        super().__init__()
-        self.title = title
-        self.description = description
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.owner_id = owner_id
-        self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
+    __tablename__ = "places"
 
-    def add_review(self, review):
-        """Add a review to the place."""
-        self.reviews.append(review)
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Float(), nullable=False)
+    latitude = db.Column(db.Float(), nullable=False)
+    longitude = db.Column(db.Float(), nullable=False)
 
-    def add_amenity(self, amenity):
-        """Add an amenity to the place."""
-        self.amenities.append(amenity)
+    @validates("title")
+    def validate_title(self, key, value):
+        if len(value) < 3 or len(value) > 100:
+            raise ValueError("Title must be between 3 and 100")
+        return value
 
+    @validates("price")
+    def validate_price(self, key, value):
+        if value <= 0:
+            raise ValueError("Price must be higher than zero")
+        return value
+
+    @validates("latitude")
+    def validate_latitude(self, key, value):
+        if not -90 <= value <= 90:
+            raise ValueError("Latitude must be between -90 and 90")
+        return value
+
+    @validates("longtitude")
+    def validate_longtitude(self, key, value):
+        if not -180 <= value <= 180:
+            raise ValueError("Longtitude must be between -180 and 180")
+        return value

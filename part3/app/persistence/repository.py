@@ -60,6 +60,7 @@ class InMemoryRepository(Repository):
             None,
         )
 
+
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
         self.model = model
