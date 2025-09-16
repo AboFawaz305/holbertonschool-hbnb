@@ -1,6 +1,13 @@
-from sqlalchemy.orm import validates
-from app.models.BaseModels import BaseModel
 from app.db import db
+from app.models.BaseModels import BaseModel
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import backref, relationship, validates
+
+
+class PlaceAmenity(BaseModel):
+    __tablename__ = "place_amenity"
+    place_id = db.Column(db.String(36), ForeignKey("places.id"))
+    amenity_id = db.Column(db.String(36), ForeignKey("amenities.id"))
 
 
 class Place(BaseModel):
@@ -11,6 +18,14 @@ class Place(BaseModel):
     price = db.Column(db.Float(), nullable=False)
     latitude = db.Column(db.Float(), nullable=False)
     longitude = db.Column(db.Float(), nullable=False)
+    owner_id = db.Column(db.Integer(), ForeignKey("users.id"), nullable=False)
+    reviews = relationship("Review", backref="place", lazy=True)
+    amenities = relationship(
+        "Amenity",
+        secondary="place_amenity",
+        backref=backref("places", lazy=True),
+        lazy=True,
+    )
 
     @validates("title")
     def validate_title(self, key, value):
@@ -30,8 +45,15 @@ class Place(BaseModel):
             raise ValueError("Latitude must be between -90 and 90")
         return value
 
-    @validates("longtitude")
+    @validates("longitude")
     def validate_longtitude(self, key, value):
         if not -180 <= value <= 180:
             raise ValueError("Longtitude must be between -180 and 180")
         return value
+
+    def __repr__(self):
+        return (
+            f"<Place(id={self.id}, title='{self.title}', price={self.price}, "
+            f"latitude={self.latitude}, longitude={self.longitude}, "
+            f"owner_id={self.owner_id})>"
+        )

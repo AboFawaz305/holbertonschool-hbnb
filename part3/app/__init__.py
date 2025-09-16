@@ -9,6 +9,10 @@ from app.api.v1.reviews import api as reviews_ns
 from app.api.v1.users import api as users_ns
 from app.bcrypt import bcrypt
 from app.db import db
+from app.models.amenity import Amenity
+from app.models.place import Place
+from app.models.review import Review
+from app.models.user import User
 
 jwt = JWTManager()
 
@@ -34,5 +38,15 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(auth_ns, "/api/v1/auth")
     with app.app_context():
         db.create_all()
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {
+            "db": db,
+            "User": User,
+            "Place": Place,
+            "Review": Review,
+            "Amenity": Amenity,
+        }
 
     return app
