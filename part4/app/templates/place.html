@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="/"><img src="images/logo.png" class="logo"></a>
+            <a href="login.html" id="login-link" class="login-button">Login</a>
+        </nav>
+    </header>
+    <main>
+        <section id="place-details">
+            <div class="place-info">
+                <h2>{{ place.title }}</h2>
+                <dl>
+                    <dt>Host</dt>
+                    <dd>{{place.owner}}</dd>
+                    <dt>Price Per Night</dt>
+                    <dd>{{place.price}}</dd>
+                    <dt>Description</dt>
+                    <dd>{{place.description}}</dd>
+                    <dt>Amenities</dt>
+                    <dd>
+                        <ul class="amenities-lists">
+                            {% for amenitie in place.amenities %}
+                            <li>{{ amenitie.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </dl>
+            </div>
+
+        </section>
+        {% if place.reviews %}
+        <section id="reviews">
+            {% for review in place.reviews %}
+            <div class="review-card">
+                <h2>{{review.reviewer}}</h2>
+                <p>{{review.text}}</p>
+                <p>rating: {% for i in range(review.rating)%}
+                    &starf;
+                    {% endfor %}
+                    {% for i in range(0,review.rating - 5)%}
+                    &star;
+                    {% endfor %}
+                </p>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+        {% if is_loggedin %}
+        <section id="add-review">
+            <h2>Add a Review</h2>
+            <form id="review-form">
+                <label for="review-text">Review:</label>
+                <textarea id="review-text" name="review-text" required></textarea>
+                <label for="rating">Rating:
+                    <input type="number" name="rating" id="rating" min="0" max="5" required>
+                </label>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+        {% endif %}
+    </main>
+    <footer>All Rights Reserved 2025 &copy;</footer>
+    <script src="scripts.js"></script>
+</body>
+
+</html>
