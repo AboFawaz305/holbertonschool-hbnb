@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_jwt_extended import JWTManager
 from flask_restx import Api
 
@@ -18,11 +18,20 @@ jwt = JWTManager()
 
 
 def create_app(config_class="config.DevelopmentConfig"):
-    app = Flask(__name__, static_url_path="/static")
+    app = Flask(__name__)  # , static_url_path="/static")
     app.config.from_object(config_class)
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
+
+    @app.route("/login")
+    def login():
+        return render_template("login.html")
+
+    @app.route("/")
+    def index():
+        return render_template("index.html")
+
     api = Api(
         app,
         version="1.0",
