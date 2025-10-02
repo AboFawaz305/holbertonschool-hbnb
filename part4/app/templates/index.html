@@ -12,7 +12,7 @@
     <header>
         <nav>
             <a href="/"><img src="static/images/logo.png" class="logo"></a>
-            <a href="login.html" id="login-link" class="login-button">Login</a>
+			<a href="{{url_for('login')}}" id="login-link" class="login-button">Login</a>
         </nav>
     </header>
     <main>
@@ -23,13 +23,13 @@
             </select>
         </section>
         <section id="places-list">
-            {% for place in places%}
-            <div class="place-card">
-                <h2>{{place.title}}</h2>
-                <p>Price Per Night {{place.Price}}</p>
-                <a href="/place/{{place.id}}">View Details</a>
-            </div>
-            {% endfor %}
+            <!-- {% for place in places%} -->
+            <!-- <div class="place-card"> -->
+            <!--     <h2>{{place.title}}</h2> -->
+            <!--     <p>Price Per Night {{place.Price}}</p> -->
+            <!--     <a href="/place/{{place.id}}">View Details</a> -->
+            <!-- </div> -->
+            <!-- {% endfor %} -->
         </section>
     </main>
     <footer>All Rights Reserved 2025 &copy;</footer>
