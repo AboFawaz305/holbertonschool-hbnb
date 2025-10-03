@@ -56,6 +56,7 @@ place_model_get_all_places = api.model(
     {
         "id": fields.String(description="id of a place"),
         "title": fields.String(required=True, description="Title of the place"),
+        "price": fields.Float(required=True, description="Price of the place"),
         "latitude": fields.Float(required=True, description="Latitude of the place"),
         "longitude": fields.Float(required=True, description="Longitude of the place"),
     },
@@ -140,7 +141,7 @@ class PlaceList(Resource):
         places = facade.get_all_places()
         if places is None:
             places = []
-        return
+        return places
 
 
 @api.route("/<place_id>")
