@@ -35,7 +35,7 @@ function displayReviews(reviews) {
     }
     reviewsSection.innerHTML = reviews.map(review => `
         <div class="review-card">
-            <h3>${review.reviewer ?? "Anonymous"}</h3>
+            <h3>${review.reviewer.first_name +' '+ review.reviewer.last_name ?? "Anonymous"}</h3>
             <p>${review.text}</p>
             <p>
                 Rating: ${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}

@@ -62,6 +62,28 @@ place_model_get_all_places = api.model(
     },
 )
 
+user_model = api.model(
+    "User",
+    {
+        "first_name": fields.String(
+            required=True, description="First name of the user"
+        ),
+        "last_name": fields.String(required=True, description="Last name of the user"),
+    },
+)
+review_model = api.model(
+    "Review Post Model",
+    {
+        "text": fields.String(required=True, description="Text of the review"),
+        "rating": fields.Integer(
+            required=True, description="Rating of the place (1-5)"
+        ),
+        "reviewer": fields.Nested(
+            user_model, required=True, description="User of the review"
+        ),
+        "place_id": fields.String(required=True, description="ID of the place"),
+    },
+)
 place_get_response = api.model(
     "place_get_response",
     {
@@ -72,6 +94,9 @@ place_get_response = api.model(
         "latitude": fields.Float(required=True, description="Latitude of the place"),
         "longitude": fields.Float(required=True, description="Longitude of the place"),
         "owner": fields.Nested(user_model),
+        "reviews": fields.List(
+            fields.Nested(review_model), description="List of reviews"
+        ),
         "amenities": fields.List(fields.String, description="List of amenities ID's"),
     },
 )
@@ -118,7 +143,7 @@ place_model = api.model(
 
 @api.route("/")
 class PlaceList(Resource):
-    @api.doc(security='Bearer Auth')
+    @api.doc(security="Bearer Auth")
     @jwt_required()
     @api.expect(place_create_request_model)
     @api.response(201, "Place successfully created")
