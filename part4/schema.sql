@@ -48,7 +48,7 @@ INSERT INTO users (
     'admin@hbnb.io',
     'Admin',
     'HBnB',
-    '$2a$12$A3kuCT9lRXqbQdsF6xrH8uvJLa9gr1izMzZpxkwf7DgGkCzUtEMD6',
+    '$2b$12$w..guslDWHol6eh/jIr8f.5p.HCg9Ff/giaKAM2Sctu4tH2zXLOiS',
     TRUE
 );
 

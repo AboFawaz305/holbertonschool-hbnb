@@ -118,6 +118,7 @@ place_model = api.model(
 
 @api.route("/")
 class PlaceList(Resource):
+    @api.doc(security='Bearer Auth')
     @jwt_required()
     @api.expect(place_create_request_model)
     @api.response(201, "Place successfully created")

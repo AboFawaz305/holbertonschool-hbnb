@@ -55,10 +55,10 @@ class ReviewList(Resource):
         if reviewed_place is None:
             api.abort(404, "Place not found")
             return
-        if user["id"] == reviewed_place["owner_id"]:
+        if user["id"] == reviewed_place.owner_id:
             api.abort(400, "invalid data:You cannot review your own place")
         try:
-            review_data["user_id"] = user["id"]
+            review_data["reviewer_id"] = user["id"]
             new_review = facade.create_review(review_data)
             return new_review, 200
         except ValueError as e:

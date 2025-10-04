@@ -1,5 +1,4 @@
 import unittest
-
 import requests
 
 API_URL = "http://127.0.0.1:5000/api/v1/"
@@ -9,7 +8,7 @@ class TestAdmin(unittest.TestCase):
     def get_admin_ac(self):
         res = requests.post(
             f"{API_URL}/auth/login",
-            json={"email": "admin@admin.com", "password": "admin"},
+            json={"email": "admin@hbnb.io", "password": "share_password"},
         )
         return res.json().get("access_token")
 

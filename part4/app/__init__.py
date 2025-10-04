@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, app, render_template
 from flask_jwt_extended import JWTManager
 from flask_restx import Api
+from flask_cors import CORS
 
 from app.api.v1.amenities import api as amenities_ns
 from app.api.v1.auth import api as auth_ns
@@ -24,6 +25,17 @@ def create_app(config_class="config.DevelopmentConfig"):
     jwt.init_app(app)
     db.init_app(app)
 
+       # Add CORS configuration
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://127.0.0.1:5000", "http://localhost:5000"],
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
+
+    
+
     @app.route("/login")
     def login():
         return render_template("login.html")
@@ -32,12 +44,28 @@ def create_app(config_class="config.DevelopmentConfig"):
     def index():
         return render_template("index.html")
 
+    @app.route("/place/<place_id>")
+    def place_details(place_id):
+        return render_template("place.html")
+
+    @app.route("/place/<place_id>/add-review")
+    def add_review(place_id):
+        return render_template("add_review.html")
+
     api = Api(
         app,
         version="1.0",
         title="HBnB API",
         description="HBnB Application API",
         doc="/api/v1/",
+        authorizations = {
+    'Bearer Auth': { 
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization',
+        'description': 'Add "Bearer <your_token_here>"'
+    }
+}
     )
 
     api.add_namespace(users_ns, "/api/v1/users")
