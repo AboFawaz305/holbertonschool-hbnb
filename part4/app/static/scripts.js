@@ -29,7 +29,7 @@ function displayMessage(sectionId, message) {
 // --- Reviews Renderer ---
 function displayReviews(reviews) {
     const reviewsSection = document.getElementById('reviews');
-    if (!reviews || !reviews.length) {
+    if (!reviews || (reviews.length && reviews.length == 0)) {
         reviewsSection.innerHTML = "<p>No reviews yet.</p>";
         return;
     }
