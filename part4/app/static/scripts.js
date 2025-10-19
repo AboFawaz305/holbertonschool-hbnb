@@ -35,7 +35,7 @@ function displayReviews(reviews) {
     }
     reviewsSection.innerHTML = reviews.map(review => `
         <div class="review-card">
-            <h3>${review.reviewer.first_name +' '+ review.reviewer.last_name ?? "Anonymous"}</h3>
+            <h3>${review.reviewer.first_name + ' ' + review.reviewer.last_name ?? "Anonymous"}</h3>
             <p>${review.text}</p>
             <p>
                 Rating: ${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}
@@ -48,15 +48,15 @@ function displayReviews(reviews) {
 function displayReviewForm(placeId) {
     const access_token = getAccessToken(); // Re-get token
     const is_loggedin = Boolean(access_token);
-    
+
     const formSection = document.getElementById('add-review');
     if (!formSection) return;
-    
+
     if (!is_loggedin) {
         formSection.innerHTML = "";
         return;
     }
-    
+
     formSection.innerHTML = `
         <h2>Add a Review</h2>
         <form id="review-form">
@@ -69,8 +69,8 @@ function displayReviewForm(placeId) {
         </form>
         <div id="review-message"></div>
     `;
-    
-    document.getElementById('review-form').onsubmit = async function(event) {
+
+    document.getElementById('review-form').onsubmit = async function (event) {
         event.preventDefault();
         const text = document.getElementById('review-text').value;
         const rating = parseInt(document.getElementById('rating').value, 10);
@@ -83,6 +83,7 @@ function displayReviewForm(placeId) {
                 },
                 body: JSON.stringify({ place_id: placeId, text, rating })
             });
+            console.log(response)
             if (response.ok) {
                 document.getElementById('review-message').textContent = "Review submitted!";
                 fetchPlaceDetails(); // Reload everything after review
@@ -167,7 +168,7 @@ async function loadPlaces() {
     const is_loggedin = Boolean(access_token);
     const places_list = document.getElementById('places-list');
     const price_filter = document.getElementById('price-filter');
-    
+
     if (!is_loggedin) {
         places_list.innerHTML = `<p>Please log in to view places.</p>`;
         return;
@@ -204,7 +205,7 @@ async function loadPlaces() {
 document.addEventListener('DOMContentLoaded', () => {
     const access_token = getAccessToken();
     const is_loggedin = Boolean(access_token);
-    
+
     // --- Login Button Control everywhere
     const login_link = document.getElementById('login-link');
     if (login_link) {
@@ -253,12 +254,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname.startsWith('/place/')) {
         fetchPlaceDetails();
         return;
-    
+
     }
     if (window.location.pathname.includes('/add-review')) {
         const placeId = getPlaceIdFromAddReviewURL();
         displayReviewForm(placeId);
         return;
     }
-  }
+}
 );

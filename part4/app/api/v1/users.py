@@ -9,14 +9,23 @@ api = Namespace("users", description="User operations")
 
 # Define the user model for input validation and documentation
 user_model = api.model(
-    "User",
+    "user",
     {
-        "first_name": fields.String(
-            required=True, description="First name of the user"
-        ),
+        "first_name": fields.String(required=True, description="First name of the user"),
         "last_name": fields.String(required=True, description="Last name of the user"),
         "email": fields.String(required=True, description="Email of the user"),
         "password": fields.String(required=True, description="password"),
+    },
+)
+
+user_model_Get = api.model(
+    "user_model_Get",
+    {
+        "first_name": fields.String(description="First name of the user"),
+        "last_name": fields.String(description="Last name of the user"),
+        "email": fields.String(description="Email of the user"),
+        "password": fields.String(description="password"),
+        "id":fields.String(description="id")
     },
 )
 
@@ -33,7 +42,7 @@ user_model_update = api.model(
 
 @api.route("/")
 class Users(Resource):
-    @api.marshal_list_with(user_model)
+    @api.marshal_list_with(user_model_Get)
     @api.response(200, "OK")
     @api.response(404, "Not found")
     def get(self):
@@ -43,6 +52,7 @@ class Users(Resource):
         return users, 200
 
     @api.expect(user_model, validate=True)
+    @api.doc(security="Bearer Auth")
     @api.response(201, "User successfully created")
     @api.response(400, "Email already registered")
     @api.response(400, "Invalid input data")
@@ -82,6 +92,7 @@ class User(Resource):
 
     @jwt_required()
     @api.marshal_with(user_model)
+    @api.doc(security="Bearer Auth")
     @api.response(200, "OK")
     @api.response(404, "Not found")
     @api.response(400, "Bad Request")

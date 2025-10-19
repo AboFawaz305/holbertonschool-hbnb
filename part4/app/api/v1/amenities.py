@@ -16,7 +16,7 @@ aminity_model = api.model(
 )
 
 aminity_get_model = api.model(
-    "Aminity",
+    "aminity_get_model",
     {
         "id": fields.String(description="ID of the amenity"),
         "name": fields.String(
@@ -29,6 +29,7 @@ aminity_get_model = api.model(
 @api.route("/")
 class AminityList(Resource):
     @api.expect(aminity_model)
+    @api.doc(security="Bearer Auth")
     @api.response(201, "Aminity successfully created")
     @api.response(400, "Invalid input data")
     @api.marshal_with(aminity_get_model)
@@ -68,6 +69,7 @@ class AmenityResource(Resource):
         return aminity, 200
 
     @api.expect(aminity_model)
+    @api.doc(security="Bearer Auth")
     @api.response(200, "Aminity updated successfully")
     @api.response(404, "Aminity not found")
     @api.response(400, "Invalid input data")

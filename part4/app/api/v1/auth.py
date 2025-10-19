@@ -30,6 +30,7 @@ class Login(Resource):
 
 
 @api.route("/protected")
+@api.doc(security="Bearer Auth")
 class Protected(Resource):
     @jwt_required()
     def get(self):

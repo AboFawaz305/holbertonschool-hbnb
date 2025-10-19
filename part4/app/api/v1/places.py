@@ -180,6 +180,7 @@ class PlaceResource(Resource):
         return facade.get_place(place_id)
 
     @jwt_required()
+    @api.doc(security="Bearer Auth")
     @api.response(200, "Place updated successfully")
     @api.response(404, "Place not found")
     @api.response(400, "Invalid input data")

@@ -26,7 +26,7 @@ review_get_model = api.model(
         "rating": fields.Integer(
             required=True, description="Rating of the place (1-5)"
         ),
-        "user_id": fields.String(required=True, description="ID of the user"),
+        "reviewer_id": fields.String(required=True, description="ID of the user"),
         "place_id": fields.String(required=True, description="ID of the place"),
     },
 )
@@ -84,11 +84,11 @@ class ReviewResource(Resource):
             api.abort(404, str(e))
 
     @jwt_required()
+    @api.doc(security="Bearer Auth")
     @api.expect(review_update_model)
     @api.response(200, "Review updated successfully")
     @api.response(404, "Review not found")
     @api.response(400, "Invalid input data")
-    @api.marshal_with(review_get_model)
     def put(self, review_id):
         """Update a review's information"""
         user = json.loads(get_jwt_identity())
@@ -97,15 +97,16 @@ class ReviewResource(Resource):
         if review is None:
             # Confuse the user so he dont know if the review id exist
             api.abort(403, "Unauthorized action 🚫")
-            return
-        if not user["id"] == review.user_id:
+        if not user["id"] == review.reviewer_id:
             api.abort(403, "Unauthorized action")
         try:
             facade.update_review(review_id, review_data)
+            return {"msg":"Review updated successfully"}, 200
         except ValueError as e:
             api.abort(400, str(e))
 
     @jwt_required()
+    @api.doc(security="Bearer Auth")
     @api.response(200, "Review deleted successfully")
     @api.response(404, "Review not found")
     def delete(self, review_id):
@@ -116,11 +117,11 @@ class ReviewResource(Resource):
             # Confuse the user so he dont know if the review id exist
             api.abort(403, "Unauthorized action")
             return
-        if not user["id"] == review.user_id:
+        if not user["id"] == review.reviewer_id:
             api.abort(403, "Unauthorized action")
         try:
             facade.delete_review(review_id)
-            return {"Review deleted successfully"}, 200
+            return {"msg":"Review deleted successfully"}, 200
         except ValueError as e:
             api.abort(404, str(e))
 
