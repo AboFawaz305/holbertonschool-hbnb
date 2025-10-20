@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>List of Places</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
@@ -11,14 +12,16 @@
         <nav>
             <a href="/"><img src="/static/images/logo.png" class="logo"></a>
             <a href="/login" id="login-link" class="login-button">Login</a>
+            <button id="logout-button" class="login-button" style="display:none;">Logout</button>
+
         </nav>
     </header>
     <main>
-        <section id="filter">
+        <section id="filter" class="nav-link">
             <label for="price-filter">Max Price:</label>
             <select id="price-filter"></select>
         </section>
-        <section id="places-list"></section>
+        <section id="places-list" class="modal-content rounded-4"></section>
     </main>
     <footer>All Rights Reserved 2025 &copy;</footer>
     <script src="/static/scripts.js"></script>

@@ -65,7 +65,7 @@ function displayReviewForm(placeId) {
             <label for="rating">Rating:
                 <input type="number" id="rating" min="1" max="5" required>
             </label>
-            <button type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit">Submit</button>
         </form>
         <div id="review-message"></div>
     `;
@@ -154,8 +154,9 @@ function renderPlaces(places) {
         return;
     }
     places_list.innerHTML = places.map(place => `
-        <div class="place-card">
+        <div class="place-card modal-content rounded-4 shadow">
             <h2>${place.title}</h2>
+            <img class="main-logo place-img" src="static/images/place.png" alt="logo">
             <p>Price Per Night: $${place.price}</p>
             <a href="/place/${place.id}" class="details-button">View Details</a>
         </div>
@@ -205,6 +206,23 @@ async function loadPlaces() {
 document.addEventListener('DOMContentLoaded', () => {
     const access_token = getAccessToken();
     const is_loggedin = Boolean(access_token);
+
+        
+    // --- Add after login_link logic in DOM Ready Handler ---
+const logout_btn = document.getElementById('logout-button');
+if (logout_btn) {
+    
+    if (is_loggedin) {
+        logout_btn.style.display = 'block';
+        logout_btn.onclick = function () {
+            // Remove token cookie and redirect to home
+            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            window.location.href = '/';
+        };
+    } else {
+        logout_btn.style.display = 'none';
+    }
+}
 
     // --- Login Button Control everywhere
     const login_link = document.getElementById('login-link');
@@ -261,5 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
         displayReviewForm(placeId);
         return;
     }
+
+
+
 }
 );
+

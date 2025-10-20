@@ -3,11 +3,14 @@
   You'll probably need to override some of theese styles.
 */
 
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    border-color: transparent;
+    
 }
 
 body {
@@ -26,13 +29,80 @@ nav a {
     text-decoration: none;
     margin-left: 1rem;
 }
-
+.btn{
+    background-color:tomato;
+    border-color: transparent;
+}
+.btn:hover {
+background-color:rgb(212, 82, 58);
+    border-color: transparent;
+}
 main {
     padding: 2rem;
+    
+}
+
+
+.modal-content{
+    width: 20rem;
+    border-color: transparent;
+   display: flex;
+  justify-content: center; 
+  align-items: center;
+  padding: 1%;
+}
+
+.main-logo{
+  display: block;
+  margin: 0 auto;
+  align-items: center;
+  width: 10rem;
+  margin-bottom: 2%;
 }
 .review-card, .place-card{
     margin: 20px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 10px;
+}
+
+.place-img{
+    border-radius: 10%;
+    width: 100%;
+}
+#place-list{
+display: flex;
+  flex-wrap: wrap;    /* Allows the cards to wrap on smaller screens */
+  gap: 16px;          /* Optional: Adds space between cards */
+  justify-content: center; /* Optional: Centers the cards horizontally */
+}
+.place-card{
+    flex: 1 1 200px;    /* Responsive card width, min-width 200px */
+  max-width: 300px;
+}
+#place-details{
+    padding: 10px;
+    margin-bottom: 50px;
+}
+footer{
+    text-align: center;
+}
+
+#review-text{
+    border-color:5px;
+}
+#login-link{
+    text-align: right;
+}
+.form-div{
+    justify-content: center;
+    display: flex;
+  flex-wrap: wrap;    /* Allows the cards to wrap on smaller screens */
+  gap: 16px;          /* Optional: Adds space between cards */
+  justify-content: center; /* Optional: Centers the cards horizontally */
+}
+#logout-button{
+    float: right;
+    background-color: transparent;
+    color: #ddd;
 }
